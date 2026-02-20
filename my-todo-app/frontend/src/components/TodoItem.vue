@@ -207,8 +207,8 @@ function priorityClass(priority: string) {
   animation: blink 1.5s step-start infinite;
 }
 .badge-player {
-  border-color: var(--color-yellow);
-  color: var(--color-yellow);
+  border-color: var(--color-magenta);
+  color: var(--color-magenta);
 }
 
 .badge-priority-low {
@@ -227,7 +227,11 @@ function priorityClass(priority: string) {
 
 .due-date {
   font-size: 6px;
-  color: var(--color-text-dim);
+  padding: 3px 6px;
+  border: 2px solid #44dd44;
+  color: #44dd44;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   flex-shrink: 0;
 }
 .overdue {
