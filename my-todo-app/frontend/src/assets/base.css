@@ -1,0 +1,77 @@
+/* ===== RETRO 90s PIXEL GAME THEME ===== */
+
+:root {
+  --pixel: 3px;
+  --color-bg: #162050;
+  --color-bg-soft: #1e2e6a;
+  --color-bg-mute: #283880;
+  --color-bg-card: #1a2860;
+
+  --color-border: #ff6ea0;
+  --color-border-hover: #ff90bb;
+
+  --color-text: #a0f0e0;
+  --color-text-bright: #ffffff;
+  --color-text-dim: #5ab8aa;
+
+  --color-accent: #ff5fa0;
+  --color-accent-dim: #e04888;
+  --color-accent-glow: rgba(255, 95, 160, 0.45);
+
+  --color-danger: #ff3860;
+  --color-danger-soft: rgba(255, 56, 96, 0.25);
+
+  --color-yellow: #ffbb77;
+  --color-cyan: #40e8d8;
+  --color-magenta: #ff44cc;
+
+  --category-personal: #ff5fa0;
+  --category-work: #40e8d8;
+  --category-urgent: #ff3860;
+
+  --font-pixel: 'Press Start 2P', monospace;
+
+  --shadow-pixel: var(--pixel) var(--pixel) 0 rgba(0, 0, 0, 0.5);
+  --shadow-pixel-accent: var(--pixel) var(--pixel) 0 var(--color-accent-dim);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+  image-rendering: pixelated;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  line-height: 2;
+  text-rendering: optimizeLegibility;
+}
+
+/* Scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  z-index: 9999;
+}
+
+/* Pixel border mixin via outline */
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
