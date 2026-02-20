@@ -5,7 +5,7 @@ import { useTodos } from '@/composables/useTodos'
 import { useUsers } from '@/composables/useUsers'
 import RetroSelect from '@/components/RetroSelect.vue'
 
-const props = defineProps<{ todo: Todo }>()
+const props = defineProps<{ todo: Todo; showHandle?: boolean }>()
 const { toggleTodo, editTodo, removeTodo } = useTodos()
 const { users, loadUsers } = useUsers()
 
@@ -79,6 +79,7 @@ function priorityClass(priority: string) {
 <template>
   <div class="todo-item" :class="{ completed: todo.completed }">
     <template v-if="!isEditing">
+      <span v-if="showHandle" class="drag-handle">&#10303;</span>
       <label class="todo-main">
         <span
           class="pixel-check"
@@ -133,6 +134,25 @@ function priorityClass(priority: string) {
 .todo-item.completed {
   opacity: 0.5;
   border-color: var(--color-border);
+}
+
+.drag-handle {
+  font-size: 14px;
+  color: var(--color-cyan);
+  cursor: grab;
+  flex-shrink: 0;
+  user-select: none;
+  padding: 0 2px;
+  transition: color 0.1s;
+}
+
+.drag-handle:hover {
+  color: var(--color-accent);
+  text-shadow: 0 0 6px var(--color-accent-glow);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 .todo-main {

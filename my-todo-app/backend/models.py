@@ -21,6 +21,7 @@ class Todo(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")  # Reference to the user who created the todo
     priority: str = "Low"  # Priority level: Low, Medium, or High
     due_date: Optional[datetime] = None  # Optional due date for the todo item
+    position: int = 0  # Position for ordering todos within a category
 
 # TodoUpdate — a schema for PATCH requests; all fields are optional so only provided fields get updated
 class TodoUpdate(SQLModel):
@@ -30,3 +31,4 @@ class TodoUpdate(SQLModel):
     user_id: Optional[int] = Field(default=None)
     priority: Optional[str] = Field(default=None)
     due_date: Optional[datetime] = Field(default=None)
+    position: Optional[int] = Field(default=None)

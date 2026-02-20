@@ -7,6 +7,7 @@ export interface Todo {
   completed: boolean
   created_at: string
   user_id: number | null
+  position: number
 }
 
 export interface CreateTodoPayload {
@@ -24,6 +25,7 @@ export interface UpdateTodoPayload {
   due_date?: string | null
   completed?: boolean
   user_id?: number | null
+  position?: number
 }
 
-export type SortOption = 'newest' | 'oldest' | 'title' | 'priority'
+export type SortOption = 'newest' | 'oldest' | 'title' | 'priority' | 'manual'

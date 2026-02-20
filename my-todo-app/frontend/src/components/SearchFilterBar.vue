@@ -15,7 +15,7 @@ const { searchQuery, sortBy } = useTodos()
       type="search"
     />
     <label class="sort-label">SORT:</label>
-    <RetroSelect v-model="sortBy" :options="['newest', 'oldest', 'title', 'priority']" />
+    <RetroSelect v-model="sortBy" :options="['manual', 'newest', 'oldest', 'title', 'priority']" />
   </div>
 </template>
 

@@ -1,9 +1,15 @@
 from fastapi import APIRouter, HTTPException
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
+from pydantic import BaseModel
+from typing import List
 from models import Todo, TodoUpdate
 from main import engine
 
 router = APIRouter()
+
+class ReorderItem(BaseModel):
+    id: int
+    position: int
 
 # Health-check endpoint — returns a simple message to confirm the API is running
 @router.get("/")
@@ -20,10 +26,22 @@ def list_todos():
 @router.post("/todos")
 def create_todo(todo: Todo):
     with Session(engine) as session:
+        count = session.exec(select(func.count()).select_from(Todo)).one()
+        todo.position = count 
         session.add(todo)
         session.commit()
         session.refresh(todo)  # refresh to get the auto-generated id and defaults
         return todo
+
+@router.put("/todos/reorder")
+def reorder_todos(items: List[ReorderItem]):
+    with Session(engine) as session:
+        for item in items:
+            todo = session.get(Todo, item.id)
+            if todo:
+                todo.position = item.position
+        session.commit()
+        return {"ok": True}
 
 # PATCH /todos/{todo_id} — partially update an existing todo's fields (title, category, completed)
 @router.patch("/todos/{todo_id}")

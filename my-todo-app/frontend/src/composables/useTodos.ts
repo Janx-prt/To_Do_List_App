@@ -5,7 +5,7 @@ import * as api from '@/services/todoApi'
 const todos = ref<Todo[]>([])
 const searchQuery = ref('')
 const filterCategory = ref('')
-const sortBy = ref<SortOption>('newest')
+const sortBy = ref<SortOption>('manual')
 const isLoading = ref(false)
 const error = ref('')
 
@@ -34,6 +34,8 @@ const filteredTodos = computed(() => {
   } else if (sortBy.value === 'priority') {
     const order: Record<string, number> = { High: 0, Medium: 1, Low: 2 }
     result = [...result].sort((a, b) => (order[a.priority] ?? 3) - (order[b.priority] ?? 3))
+  } else if (sortBy.value === 'manual') {
+    result = [...result].sort((a, b) => a.position - b.position)
   }
 
   return result
@@ -97,6 +99,20 @@ async function editTodo(id: number, payload: UpdateTodoPayload) {
   }
 }
 
+async function reorderTodos(reordered: Todo[]) {
+  error.value = ''
+  try {
+    const items = reordered.map((t, i) => ({ id: t.id, position: i }))
+    await api.reorderTodos(items)
+    for (const item of items) {
+      const todo = todos.value.find((t) => t.id === item.id)
+      if (todo) todo.position = item.position
+    }
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Failed to reorder todos'
+  }
+}
+
 async function removeTodo(id: number) {
   error.value = ''
   try {
@@ -123,5 +139,6 @@ export function useTodos() {
     toggleTodo,
     editTodo,
     removeTodo,
+    reorderTodos,
   }
 }

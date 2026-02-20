@@ -34,3 +34,12 @@ export async function deleteTodo(id: number): Promise<void> {
   })
   if (!res.ok) throw new Error('Failed to delete todo')
 }
+
+export async function reorderTodos(items: { id: number; position: number }[]): Promise<void> {
+  const res = await fetch(`${API_BASE}/todos/reorder`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(items),
+  })
+  if (!res.ok) throw new Error('Failed to reorder todos')
+}
