@@ -9,6 +9,8 @@ const { users, loadUsers } = useUsers()
 
 const title = ref('')
 const category = ref('Personal')
+const priority = ref('Low')
+const dueDate = ref('')
 const selectedPlayer = ref('None')
 
 const playerOptions = computed(() => ['None', ...users.value.map((u) => u.username)])
@@ -21,8 +23,15 @@ async function handleSubmit() {
   const trimmed = title.value.trim()
   if (!trimmed) return
   const user = users.value.find((u) => u.username === selectedPlayer.value)
-  await addTodo({ title: trimmed, category: category.value, user_id: user ? user.id : null })
+  await addTodo({
+    title: trimmed,
+    category: category.value,
+    priority: priority.value,
+    due_date: dueDate.value || null,
+    user_id: user ? user.id : null,
+  })
   title.value = ''
+  dueDate.value = ''
 }
 </script>
 
@@ -37,6 +46,15 @@ async function handleSubmit() {
         autofocus
       />
       <RetroSelect v-model="category" :options="['Personal', 'Work', 'Urgent']" />
+      <RetroSelect v-model="priority" :options="['Low', 'Medium', 'High']" />
+      <input
+        v-model="dueDate"
+        type="text"
+        class="retro-input retro-date"
+        placeholder="Date"
+        onfocus="this.type='date'"
+        onblur="if(!this.value)this.type='text'"
+      />
       <RetroSelect v-model="selectedPlayer" :options="playerOptions" />
       <button type="submit" class="btn-add">+ ADD</button>
     </div>
@@ -62,6 +80,13 @@ async function handleSubmit() {
 .input-row {
   display: flex;
   gap: 6px;
+  align-items: stretch;
+}
+
+.input-row :deep(.select-trigger) {
+  height: 100%;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .retro-input {
@@ -106,5 +131,12 @@ async function handleSubmit() {
 .btn-add:active {
   box-shadow: none;
   transform: translate(3px, 3px);
+}
+
+.retro-date {
+  flex: 0 0 auto;
+  width: 130px;
+  font-family: var(--font-pixel);
+  color-scheme: dark;
 }
 </style>

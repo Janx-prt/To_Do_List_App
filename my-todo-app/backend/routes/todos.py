@@ -35,6 +35,8 @@ def update_todo(todo_id: int, todo_update: TodoUpdate):
             todo.completed = todo_update.completed if todo_update.completed is not None else todo.completed
             todo.title = todo_update.title if todo_update.title is not None else todo.title
             todo.category = todo_update.category if todo_update.category is not None else todo.category
+            todo.priority = todo_update.priority if todo_update.priority is not None else todo.priority
+            todo.due_date = todo_update.due_date if todo_update.due_date is not None else todo.due_date
             if todo_update.user_id is not None:
                 todo.user_id = todo_update.user_id
             session.commit()

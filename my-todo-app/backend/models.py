@@ -19,6 +19,8 @@ class Todo(SQLModel, table=True):
     completed: bool = False                                     # Whether the todo is done
     created_at: datetime = Field(default_factory=datetime.utcnow)
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")  # Reference to the user who created the todo
+    priority: str = "Low"  # Priority level: Low, Medium, or High
+    due_date: Optional[datetime] = None  # Optional due date for the todo item
 
 # TodoUpdate — a schema for PATCH requests; all fields are optional so only provided fields get updated
 class TodoUpdate(SQLModel):
@@ -26,3 +28,5 @@ class TodoUpdate(SQLModel):
     category: Optional[str] = Field(default=None)
     completed: Optional[bool] = Field(default=None)
     user_id: Optional[int] = Field(default=None)
+    priority: Optional[str] = Field(default=None)
+    due_date: Optional[datetime] = Field(default=None)

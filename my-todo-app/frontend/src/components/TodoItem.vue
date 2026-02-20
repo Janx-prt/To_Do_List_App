@@ -12,6 +12,8 @@ const { users, loadUsers } = useUsers()
 const isEditing = ref(false)
 const editTitle = ref('')
 const editCategory = ref('')
+const editPriority = ref('Low')
+const editDueDate = ref('')
 const editPlayer = ref('None')
 
 const playerOptions = computed(() => ['None', ...users.value.map((u) => u.username)])
@@ -22,6 +24,17 @@ const assignedName = computed(() => {
   return user ? user.username : null
 })
 
+const isOverdue = computed(() => {
+  if (!props.todo.due_date || props.todo.completed) return false
+  return new Date(props.todo.due_date) < new Date(new Date().toDateString())
+})
+
+const formattedDueDate = computed(() => {
+  if (!props.todo.due_date) return null
+  const d = new Date(props.todo.due_date)
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+})
+
 onMounted(() => {
   if (users.value.length === 0) loadUsers()
 })
@@ -29,6 +42,8 @@ onMounted(() => {
 function startEdit() {
   editTitle.value = props.todo.title
   editCategory.value = props.todo.category
+  editPriority.value = props.todo.priority || 'Low'
+  editDueDate.value = props.todo.due_date ? props.todo.due_date.split('T')[0] : ''
   const user = users.value.find((u) => u.id === props.todo.user_id)
   editPlayer.value = user ? user.username : 'None'
   isEditing.value = true
@@ -41,6 +56,8 @@ async function saveEdit() {
   await editTodo(props.todo.id, {
     title: trimmed,
     category: editCategory.value,
+    priority: editPriority.value,
+    due_date: editDueDate.value || null,
     user_id: user ? user.id : null,
   })
   isEditing.value = false
@@ -52,6 +69,10 @@ function cancelEdit() {
 
 function categoryClass(category: string) {
   return `badge-${category.toLowerCase()}`
+}
+
+function priorityClass(priority: string) {
+  return `badge-priority-${priority.toLowerCase()}`
 }
 </script>
 
@@ -69,6 +90,8 @@ function categoryClass(category: string) {
         </span>
         <span class="todo-title">{{ todo.title }}</span>
         <span class="badge" :class="categoryClass(todo.category)">{{ todo.category }}</span>
+        <span class="badge" :class="priorityClass(todo.priority)">{{ todo.priority }}</span>
+        <span v-if="formattedDueDate" class="due-date" :class="{ overdue: isOverdue }">{{ formattedDueDate }}</span>
         <span v-if="assignedName" class="badge badge-player">{{ assignedName }}</span>
       </label>
       <div class="todo-actions">
@@ -80,6 +103,8 @@ function categoryClass(category: string) {
       <form class="edit-form" @submit.prevent="saveEdit">
         <input v-model="editTitle" class="retro-input" autofocus @keydown.esc="cancelEdit" />
         <RetroSelect v-model="editCategory" :options="['Personal', 'Work', 'Urgent']" />
+        <RetroSelect v-model="editPriority" :options="['Low', 'Medium', 'High']" />
+        <input v-model="editDueDate" type="date" class="retro-input retro-date" @keydown.esc="cancelEdit" />
         <RetroSelect v-model="editPlayer" :options="playerOptions" />
         <button type="submit" class="btn-retro btn-save">OK</button>
         <button type="button" class="btn-retro btn-cancel" @click="cancelEdit">ESC</button>
@@ -186,6 +211,30 @@ function categoryClass(category: string) {
   color: var(--color-yellow);
 }
 
+.badge-priority-low {
+  border-color: var(--priority-low);
+  color: var(--priority-low);
+}
+.badge-priority-medium {
+  border-color: var(--priority-medium);
+  color: var(--priority-medium);
+}
+.badge-priority-high {
+  border-color: var(--priority-high);
+  color: var(--priority-high);
+  animation: blink 1.5s step-start infinite;
+}
+
+.due-date {
+  font-size: 6px;
+  color: var(--color-text-dim);
+  flex-shrink: 0;
+}
+.overdue {
+  color: var(--color-danger);
+  text-shadow: 0 0 6px var(--color-danger-soft);
+}
+
 @keyframes blink {
   50% { opacity: 0.4; }
 }
@@ -273,4 +322,10 @@ function categoryClass(category: string) {
   box-shadow: 0 0 8px var(--color-accent-glow);
 }
 
+.retro-date {
+  flex: 0 0 auto;
+  width: 130px;
+  font-family: var(--font-pixel);
+  color-scheme: dark;
+}
 </style>

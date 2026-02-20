@@ -95,7 +95,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   top: calc(100% + 2px);
   left: 0;
   right: 0;
-  min-width: 100%;
+  min-width: max-content;
   background: var(--color-bg);
   border: 2px solid var(--color-cyan);
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);

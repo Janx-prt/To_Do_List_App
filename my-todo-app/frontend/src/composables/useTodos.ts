@@ -31,6 +31,9 @@ const filteredTodos = computed(() => {
     )
   } else if (sortBy.value === 'title') {
     result = [...result].sort((a, b) => a.title.localeCompare(b.title))
+  } else if (sortBy.value === 'priority') {
+    const order: Record<string, number> = { High: 0, Medium: 1, Low: 2 }
+    result = [...result].sort((a, b) => (order[a.priority] ?? 3) - (order[b.priority] ?? 3))
   }
 
   return result

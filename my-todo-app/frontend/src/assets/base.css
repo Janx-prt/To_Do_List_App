@@ -29,6 +29,10 @@
   --category-work: #40e8d8;
   --category-urgent: #ff3860;
 
+  --priority-low: #40e8d8;
+  --priority-medium: #ffbb77;
+  --priority-high: #ff3860;
+
   --font-pixel: 'Press Start 2P', monospace;
 
   --shadow-pixel: var(--pixel) var(--pixel) 0 rgba(0, 0, 0, 0.5);
