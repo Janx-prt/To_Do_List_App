@@ -1,9 +1,11 @@
+from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select, func
 from pydantic import BaseModel
 from typing import List
-from models import Todo, TodoUpdate
-from main import engine
+from models import Todo, TodoUpdate, User
+from database import engine
+from gamification import process_completion
 
 router = APIRouter()
 
@@ -49,6 +51,7 @@ def update_todo(todo_id: int, todo_update: TodoUpdate):
     with Session(engine) as session:
         todo = session.get(Todo, todo_id)
         if todo:
+            was_completed = todo.completed
             # Only overwrite fields that were actually provided in the request
             todo.completed = todo_update.completed if todo_update.completed is not None else todo.completed
             todo.title = todo_update.title if todo_update.title is not None else todo.title
@@ -57,9 +60,26 @@ def update_todo(todo_id: int, todo_update: TodoUpdate):
             todo.due_date = todo_update.due_date if todo_update.due_date is not None else todo.due_date
             if todo_update.user_id is not None:
                 todo.user_id = todo_update.user_id
+
+            gamification_result = None
+
+            # Detect completion transition
+            if not was_completed and todo.completed:
+                todo.completed_at = datetime.utcnow()
+                if todo.user_id:
+                    user = session.get(User, todo.user_id)
+                    if user:
+                        gamification_result = process_completion(session, user, todo)
+            elif was_completed and not todo.completed:
+                todo.completed_at = None
+
             session.commit()
             session.refresh(todo)
-            return todo
+
+            response = todo.model_dump()
+            if gamification_result:
+                response["gamification"] = gamification_result
+            return response
         raise HTTPException(status_code=404, detail="Todo not found")
 
 # DELETE /todos/{todo_id} — remove a todo from the database by its id

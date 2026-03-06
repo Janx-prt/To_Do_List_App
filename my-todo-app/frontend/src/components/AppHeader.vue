@@ -5,7 +5,7 @@ import { RouterLink } from 'vue-router'
 <template>
   <header class="app-header">
     <h1 class="app-title">
-MY TODOS
+MY QUESTS
     </h1>
     <nav class="nav-links">
       <RouterLink to="/" exact-active-class="active">ALL</RouterLink>
@@ -14,6 +14,7 @@ MY TODOS
       <RouterLink to="/category/Urgent" active-class="active">URGENT</RouterLink>
       <span class="nav-sep">|</span>
       <RouterLink to="/users" active-class="active">PLAYERS</RouterLink>
+      <RouterLink to="/leaderboard" active-class="active">SCORES</RouterLink>
     </nav>
   </header>
 </template>
@@ -34,8 +35,8 @@ MY TODOS
 
 .app-title {
   font-size: 14px;
-  color: var(--color-accent);
-  text-shadow: 2px 2px 0 rgba(0, 255, 136, 0.3);
+  color: var(--color-yellow);
+  text-shadow: 2px 2px 0 rgba(255, 187, 119, 0.3);
   letter-spacing: 2px;
 }
 

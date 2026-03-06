@@ -1,4 +1,4 @@
-import type { User, CreateUserPayload } from '@/types/user'
+import type { User, CreateUserPayload, UserStats, LeaderboardEntry } from '@/types/user'
 import type { Todo } from '@/types/todo'
 
 const API_BASE = 'http://localhost:8002'
@@ -46,4 +46,22 @@ export async function deleteUser(id: number): Promise<void> {
     method: 'DELETE',
   })
   if (!res.ok) throw new Error('Failed to delete user')
+}
+
+export async function fetchUserStats(id: number): Promise<UserStats> {
+  const res = await fetch(`${API_BASE}/users/${id}/stats`)
+  if (!res.ok) throw new Error('Failed to fetch user stats')
+  return res.json()
+}
+
+export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
+  const res = await fetch(`${API_BASE}/leaderboard`)
+  if (!res.ok) throw new Error('Failed to fetch leaderboard')
+  return res.json()
+}
+
+export async function fetchAchievements(): Promise<{ key: string; name: string; description: string; icon: string }[]> {
+  const res = await fetch(`${API_BASE}/achievements`)
+  if (!res.ok) throw new Error('Failed to fetch achievements')
+  return res.json()
 }

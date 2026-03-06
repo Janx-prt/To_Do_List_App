@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { User } from '@/types/user'
 import { useUsers } from '@/composables/useUsers'
+import StreakBadge from '@/components/StreakBadge.vue'
 
 const props = defineProps<{ user: User }>()
 const { editUser, removeUser } = useUsers()
@@ -36,6 +37,8 @@ async function pickAvatar(emoji: string) {
     </div>
     <RouterLink :to="`/users/${user.id}`" class="user-main">
       <span class="user-name">{{ user.username }}</span>
+      <span class="user-level">LV{{ user.level }}</span>
+      <StreakBadge :streak="user.current_streak" />
       <span class="user-email">{{ user.email }}</span>
     </RouterLink>
     <div class="user-actions">
@@ -141,6 +144,13 @@ async function pickAvatar(emoji: string) {
   font-size: 9px;
   color: var(--color-text-bright);
   transition: all 0.1s;
+}
+
+.user-level {
+  font-size: 7px;
+  color: var(--color-yellow);
+  padding: 1px 5px;
+  border: 1px solid var(--color-yellow);
 }
 
 .user-email {

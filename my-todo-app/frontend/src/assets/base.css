@@ -33,6 +33,11 @@
   --priority-medium: #ffbb77;
   --priority-high: #ff3860;
 
+  --color-gold: #ffd700;
+  --color-silver: #c0c0c0;
+  --color-bronze: #cd7f32;
+  --color-streak: #ff6600;
+
   --font-pixel: 'Press Start 2P', monospace;
 
   --shadow-pixel: var(--pixel) var(--pixel) 0 rgba(0, 0, 0, 0.5);

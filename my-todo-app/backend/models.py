@@ -7,9 +7,21 @@ class User(SQLModel, table=True):
     username: str
     email: str
     avatar: str = "⚔️"
+    xp: int = 0
+    level: int = 1
+    current_streak: int = 0
+    max_streak: int = 0
+    last_completion_date: Optional[str] = None
+    total_completed: int = 0
 
 class UserUpdate(SQLModel):
     avatar: Optional[str] = Field(default=None)
+
+class UserAchievement(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    achievement_key: str
+    unlocked_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Todo — the main database table model representing a single todo item
 class Todo(SQLModel, table=True):
@@ -22,6 +34,7 @@ class Todo(SQLModel, table=True):
     priority: str = "Low"  # Priority level: Low, Medium, or High
     due_date: Optional[datetime] = None  # Optional due date for the todo item
     position: int = 0  # Position for ordering todos within a category
+    completed_at: Optional[datetime] = None
 
 # TodoUpdate — a schema for PATCH requests; all fields are optional so only provided fields get updated
 class TodoUpdate(SQLModel):

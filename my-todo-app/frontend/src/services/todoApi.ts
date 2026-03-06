@@ -1,4 +1,4 @@
-import type { Todo, CreateTodoPayload, UpdateTodoPayload } from '@/types/todo'
+import type { Todo, CreateTodoPayload, UpdateTodoPayload, TodoUpdateResponse } from '@/types/todo'
 
 const API_BASE = 'http://localhost:8002'
 
@@ -18,7 +18,7 @@ export async function createTodo(payload: CreateTodoPayload): Promise<Todo> {
   return res.json()
 }
 
-export async function updateTodo(id: number, payload: UpdateTodoPayload): Promise<Todo> {
+export async function updateTodo(id: number, payload: UpdateTodoPayload): Promise<TodoUpdateResponse> {
   const res = await fetch(`${API_BASE}/todos/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

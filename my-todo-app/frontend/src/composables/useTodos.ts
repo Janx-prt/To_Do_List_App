@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import type { Todo, CreateTodoPayload, UpdateTodoPayload, SortOption } from '@/types/todo'
 import * as api from '@/services/todoApi'
+import { useGamification } from './useGamification'
 
 const todos = ref<Todo[]>([])
 const searchQuery = ref('')
@@ -80,9 +81,14 @@ async function addTodo(payload: CreateTodoPayload) {
 async function toggleTodo(todo: Todo) {
   error.value = ''
   try {
-    const updated = await api.updateTodo(todo.id, { completed: !todo.completed })
+    const response = await api.updateTodo(todo.id, { completed: !todo.completed })
+    const { gamification, ...updated } = response
     const idx = todos.value.findIndex((t) => t.id === todo.id)
     if (idx !== -1) todos.value[idx] = updated
+    if (gamification) {
+      const { processGamificationResult } = useGamification()
+      processGamificationResult(gamification)
+    }
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to toggle todo'
   }

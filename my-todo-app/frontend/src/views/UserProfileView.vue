@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { User } from '@/types/user'
+import type { User, UserStats } from '@/types/user'
 import type { Todo } from '@/types/todo'
-import { fetchUser, fetchUserTodos } from '@/services/userApi'
+import { fetchUser, fetchUserTodos, fetchUserStats } from '@/services/userApi'
 import TodoItem from '@/components/TodoItem.vue'
 import TodoStats from '@/components/TodoStats.vue'
+import XpBar from '@/components/XpBar.vue'
+import StreakBadge from '@/components/StreakBadge.vue'
+import AchievementGrid from '@/components/AchievementGrid.vue'
 
 const route = useRoute()
 
 const user = ref<User | null>(null)
 const todos = ref<Todo[]>([])
+const stats = ref<UserStats | null>(null)
 const isLoading = ref(false)
 const error = ref('')
 
@@ -18,12 +22,14 @@ async function loadProfile(id: number) {
   isLoading.value = true
   error.value = ''
   try {
-    const [userData, todosData] = await Promise.all([
+    const [userData, todosData, statsData] = await Promise.all([
       fetchUser(id),
       fetchUserTodos(id),
+      fetchUserStats(id),
     ])
     user.value = userData
     todos.value = todosData
+    stats.value = statsData
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to load profile'
   } finally {
@@ -56,6 +62,22 @@ watch(() => route.params.id, (newId) => {
         </div>
         <div class="profile-id">ID: {{ user.id }}</div>
       </div>
+
+      <template v-if="stats">
+        <XpBar
+          :xp="stats.xp"
+          :xp-in-level="stats.xp_in_level"
+          :xp-for-level="stats.xp_for_level"
+          :level="stats.level"
+        />
+        <div class="stats-row">
+          <StreakBadge :streak="stats.current_streak" />
+          <span class="stat-item">COMPLETED: {{ stats.total_completed }}</span>
+          <span class="stat-item">MAX STREAK: {{ stats.max_streak }}</span>
+        </div>
+        <h3 class="section-title">ACHIEVEMENTS</h3>
+        <AchievementGrid :achievements="stats.achievements" />
+      </template>
 
       <h3 class="section-title">&#9876; ASSIGNED QUESTS</h3>
       <TodoStats :todos="todos" />
@@ -118,6 +140,21 @@ watch(() => route.params.id, (newId) => {
   border: 2px solid var(--color-border);
   padding: 4px 8px;
   background: var(--color-bg);
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--color-bg-soft);
+  border: 2px solid var(--color-border);
+  box-shadow: var(--shadow-pixel);
+}
+
+.stat-item {
+  font-size: 7px;
+  color: var(--color-text-dim);
 }
 
 .section-title {
